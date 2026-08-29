@@ -48,6 +48,7 @@ class CommandRunner:
     def cancel(self):
         self.cancelled.set()
         if self.process and self.process.poll() is None:
+            # start_new_session=True makes the child PID its process-group ID.
             if hasattr(os, "killpg"):
                 os.killpg(self.process.pid, signal.SIGTERM)
             else:
@@ -95,7 +96,7 @@ class CommandRunner:
         output = redact(output)
         if self.cancelled.is_set():
             raise AgentError("Command cancelled.\n{}".format(output))
-        if returncode:
+        if returncode != 0:
             raise AgentError("Command failed with exit code {}.\n{}".format(
                 returncode, output
             ))
@@ -104,7 +105,7 @@ class CommandRunner:
 
 class AIClient:
     def __init__(self, endpoint, api_key, model, timeout=60):
-        if not api_key:
+        if not api_key or not api_key.strip():
             raise AgentError("Set AI_AGENT_API_KEY before starting chat.")
         self.endpoint = endpoint
         self._api_key = api_key

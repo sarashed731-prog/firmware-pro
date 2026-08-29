@@ -24,7 +24,7 @@ def test_command_requires_approval(tmp_path):
 
 
 def test_successful_check(tmp_path, monkeypatch):
-    monkeypatch.setitem(ai_agent.COMMANDS, "gen_check", ("printf", "ok"))
+    monkeypatch.setitem(ai_agent.COMMANDS, "gen_check", ("echo", "ok"))
     runner = CommandRunner(tmp_path)
     runner.timeout = 10
     assert runner.run("gen_check", True) == "ok"
