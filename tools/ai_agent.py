@@ -48,7 +48,10 @@ class CommandRunner:
     def cancel(self):
         self.cancelled.set()
         if self.process and self.process.poll() is None:
-            os.killpg(self.process.pid, signal.SIGTERM)
+            if hasattr(os, "killpg"):
+                os.killpg(self.process.pid, signal.SIGTERM)
+            else:
+                self.process.terminate()
 
     def run(self, name, approve):
         if name not in COMMANDS:
@@ -76,7 +79,14 @@ class CommandRunner:
             returncode = self.process.returncode
         except subprocess.TimeoutExpired:
             self.cancel()
-            output, _ = self.process.communicate()
+            try:
+                output, _ = self.process.communicate(timeout=2)
+            except subprocess.TimeoutExpired:
+                if hasattr(os, "killpg"):
+                    os.killpg(self.process.pid, signal.SIGKILL)
+                else:
+                    self.process.kill()
+                output, _ = self.process.communicate()
             raise AgentError("Command timed out after {} seconds.\n{}".format(
                 self.timeout, redact(output)
             ))
@@ -97,7 +107,7 @@ class AIClient:
         if not api_key:
             raise AgentError("Set AI_AGENT_API_KEY before starting chat.")
         self.endpoint = endpoint
-        self.api_key = api_key
+        self._api_key = api_key
         self.model = model
         self.timeout = timeout
         self.history = []
@@ -112,7 +122,7 @@ class AIClient:
             self.endpoint,
             data=body,
             headers={
-                "Authorization": "Bearer " + self.api_key,
+                "Authorization": "Bearer " + self._api_key,
                 "Content-Type": "application/json",
             },
             method="POST",
@@ -130,15 +140,14 @@ class AIClient:
         return answer
 
 
-def interactive(repository):
+def interactive(repository, endpoint):
     client = None
     runner = CommandRunner(repository)
-    endpoint = os.environ.get("AI_AGENT_ENDPOINT", DEFAULT_ENDPOINT)
     model = os.environ.get("AI_AGENT_MODEL", "gpt-4o-mini")
     try:
         client = AIClient(endpoint, os.environ.get("AI_AGENT_API_KEY"), model)
     except AgentError as exc:
-        print(exc, file=sys.stderr)
+        print("{} Chat is unavailable.".format(exc), file=sys.stderr)
     print("Commands: /run gen_check|rust_test|emulator_test, /cancel, /quit")
     while True:
         try:
@@ -174,8 +183,13 @@ def interactive(repository):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository", default=Path(__file__).resolve().parents[1])
+    parser.add_argument(
+        "--endpoint",
+        default=os.environ.get("AI_AGENT_ENDPOINT", DEFAULT_ENDPOINT),
+        help="OpenAI-compatible endpoint, e.g. http://127.0.0.1:8000/v1/chat/completions",
+    )
     args = parser.parse_args()
-    interactive(args.repository)
+    interactive(args.repository, args.endpoint)
 
 
 if __name__ == "__main__":

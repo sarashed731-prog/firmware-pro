@@ -37,6 +37,11 @@ def test_timeout(tmp_path, monkeypatch):
         runner.run("gen_check", True)
 
 
+def test_localhost_endpoint_is_accepted():
+    client = AIClient("http://127.0.0.1:8000/v1/chat/completions", "test", "test")
+    assert client.endpoint.startswith("http://127.0.0.1:")
+
+
 def test_missing_api_key():
     with pytest.raises(AgentError, match="AI_AGENT_API_KEY"):
         AIClient("http://127.0.0.1", None, "test")

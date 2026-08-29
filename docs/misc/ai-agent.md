@@ -15,6 +15,16 @@ python3 tools/ai_agent.py
 ```
 
 `AI_AGENT_ENDPOINT` may point to an OpenAI-compatible chat-completions endpoint.
+For a service running inside iSH, use the loopback address explicitly:
+
+```sh
+python3 tools/ai_agent.py \
+  --endpoint http://127.0.0.1:8000/v1/chat/completions
+```
+
+If the service runs on the iOS host rather than inside iSH, use the host and
+port exposed by that service; `127.0.0.1` refers to iSH's own network
+namespace.
 The key is read from the environment only; never put it in the repository,
 shell history, prompts, or bug reports.
 
