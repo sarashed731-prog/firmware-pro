@@ -52,5 +52,6 @@
   - [Review Process](misc/review.md)
   - [Changelog](misc/changelog.md)
   - [TOIF Image Format](misc/toif.md)
+  - [Local AI agent](misc/ai-agent.md)
 - [Developers guide](developers/index.md)
   - [Libraries](developers/libraries.md)
