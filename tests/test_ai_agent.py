@@ -42,6 +42,16 @@ def test_localhost_endpoint_is_accepted():
     assert client.endpoint.startswith("http://127.0.0.1:")
 
 
+def test_remote_http_endpoint_is_rejected():
+    with pytest.raises(AgentError, match="HTTPS"):
+        AIClient("http://example.test/chat", "test", "test")
+
+
+def test_endpoint_credentials_are_rejected():
+    with pytest.raises(AgentError, match="embedded credentials"):
+        AIClient("https://user@example.test/chat", "test", "test")
+
+
 def test_missing_api_key():
     with pytest.raises(AgentError, match="AI_AGENT_API_KEY"):
         AIClient("http://127.0.0.1", None, "test")

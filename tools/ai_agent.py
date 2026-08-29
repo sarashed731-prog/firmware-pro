@@ -11,6 +11,7 @@ import threading
 import urllib.error
 import urllib.request
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 DEFAULT_ENDPOINT = "https://api.openai.com/v1/chat/completions"
@@ -24,6 +25,24 @@ SENSITIVE_NAMES = ("KEY", "TOKEN", "SECRET", "PASSWORD", "PASS", "CREDENTIAL")
 
 class AgentError(Exception):
     """An expected, user-facing agent error."""
+
+
+class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, msg, headers, new_url):
+        raise urllib.error.HTTPError(
+            request.full_url, code, "Redirects are disabled", headers, fp
+        )
+
+
+def validate_endpoint(endpoint):
+    parsed = urlparse(endpoint)
+    local = parsed.hostname in ("127.0.0.1", "localhost", "::1")
+    if parsed.scheme != "https" and not (parsed.scheme == "http" and local):
+        raise AgentError(
+            "AI endpoint must use HTTPS; HTTP is allowed only for localhost."
+        )
+    if not parsed.netloc or parsed.username or parsed.password:
+        raise AgentError("AI endpoint must be a valid URL without embedded credentials.")
 
 
 def redact(value):
@@ -108,6 +127,7 @@ class AIClient:
         if not api_key or not api_key.strip():
             raise AgentError("Set AI_AGENT_API_KEY before starting chat.")
         self.endpoint = endpoint
+        validate_endpoint(endpoint)
         self._api_key = api_key
         self.model = model
         self.timeout = timeout
@@ -129,7 +149,8 @@ class AIClient:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+            opener = urllib.request.build_opener(NoRedirectHandler)
+            with opener.open(request, timeout=self.timeout) as response:
                 payload = json.loads(response.read().decode("utf-8"))
             answer = payload["choices"][0]["message"]["content"]
         except (urllib.error.URLError, TimeoutError) as exc:
