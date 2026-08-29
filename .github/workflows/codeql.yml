@@ -1,0 +1,88 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "0 9 * * 1"
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ fromJSON(matrix.runner) }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: c-cpp
+            category: /language:c-cpp
+            build-mode: autobuild
+            runner: '["ubuntu-latest"]'
+          - language: python
+            category: /language:python
+            build-mode: none
+            runner: '["ubuntu-latest"]'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup proxy for registries
+        id: proxy
+        uses: github/codeql-action/start-proxy@v4
+        with:
+          registries_credentials: ${{ secrets.GITHUB_REGISTRIES_PROXY }}
+          language: ${{ matrix.language }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        env:
+          CODEQL_PROXY_HOST: ${{ steps.proxy.outputs.proxy_host }}
+          CODEQL_PROXY_PORT: ${{ steps.proxy.outputs.proxy_port }}
+          CODEQL_PROXY_CA_CERTIFICATE: ${{ steps.proxy.outputs.proxy_ca_certificate }}
+          CODEQL_PROXY_URLS: ${{ steps.proxy.outputs.proxy_urls }}
+        with:
+          analysis-kinds: code-scanning
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          dependency-caching: ${{ runner.environment == 'github-hosted' }}
+          queries: ""  # Default query suite
+          config: |
+            default-setup:
+              org:
+                model-packs: [  ]
+            threat-models: [  ]
+
+      - name: Configure
+        uses: github/codeql-action/resolve-environment@v4
+        id: resolve-environment
+        with:
+          language: ${{ matrix.language }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v4
+        env:
+          CODEQL_PROXY_HOST: ${{ steps.proxy.outputs.proxy_host }}
+          CODEQL_PROXY_PORT: ${{ steps.proxy.outputs.proxy_port }}
+          CODEQL_PROXY_CA_CERTIFICATE: ${{ steps.proxy.outputs.proxy_ca_certificate }}
+          CODEQL_PROXY_URLS: ${{ steps.proxy.outputs.proxy_urls }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        env:
+          CODEQL_PROXY_HOST: ${{ steps.proxy.outputs.proxy_host }}
+          CODEQL_PROXY_PORT: ${{ steps.proxy.outputs.proxy_port }}
+          CODEQL_PROXY_CA_CERTIFICATE: ${{ steps.proxy.outputs.proxy_ca_certificate }}
+          CODEQL_PROXY_URLS: ${{ steps.proxy.outputs.proxy_urls }}
+        with:
+          category: ${{ matrix.category }}
