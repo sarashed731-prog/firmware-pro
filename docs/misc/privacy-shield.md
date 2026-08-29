@@ -41,6 +41,7 @@ Minimum controls:
 - encryption at rest for stored sensitive data
 - centralized key lifecycle management (generation, rotation, revocation)
 - strict access control with least-privilege roles and periodic review
+- default-deny source blocking for untrusted or unverified data sources, with source verification before allowing access
 
 ## 5) Privacy-by-default behavior
 
