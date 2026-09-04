@@ -15,7 +15,7 @@ ignored_files="^core/src/apps/ethereum/networks.py$
 changed_files=$(mktemp)
 trap 'rm -- $changed_files' EXIT
 
-git fetch origin "$base_branch"
+git fetch origin "$base_branch:refs/remotes/origin/$base_branch"
 
 check_feature_branch () {
 
