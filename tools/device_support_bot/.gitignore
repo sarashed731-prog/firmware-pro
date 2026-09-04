@@ -1,0 +1,12 @@
+# Never keep local chat traces, caches, or runtime dumps
+*.log
+*.hist
+*.history
+chat_history*
+session*
+telemetry*
+*.tmp
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
