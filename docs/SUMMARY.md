@@ -45,6 +45,7 @@
   - [Affected third-parties](misc/third-parties.md)
   - [Coins' BIP-44 Paths](misc/coins-bip44-paths.md)
   - [Contributing](misc/contributing.md)
+  - [Device support bot](misc/device-support-bot.md)
   - [FW update and device wipe](misc/update-wipes.md)
   - [Generated Files](misc/generated-files.md)
   - [Git Hooks](misc/git-hooks.md)

@@ -1,0 +1,196 @@
+{
+  "device": "OneKey Pro",
+  "version": 1,
+  "safety_rules": [
+    "Never ask for, accept, or repeat seed phrases, recovery words, PINs, passphrases, or private keys.",
+    "Never instruct users to enter secrets into chat, email, or untrusted websites.",
+    "Escalate hardware wallet security incidents to security@onekey.so \u2014 do not open public issues for vulnerabilities.",
+    "Prefer official docs and verified firmware paths over third-party tools.",
+    "Block all music and entertainment requests; keep scope on device wallet support only."
+  ],
+  "topics": [
+    {
+      "id": "getting-started",
+      "title": "Getting started with OneKey Pro",
+      "keywords": [
+        "start",
+        "setup",
+        "initialize",
+        "new device",
+        "first time",
+        "onboarding",
+        "beginner"
+      ],
+      "answer": "OneKey Pro is a hardware wallet. Typical first steps: (1) unbox and power on the device, (2) install or open the official OneKey app, (3) create a new wallet or restore from a recovery phrase written offline, (4) set a strong PIN on the device, (5) verify the device firmware is official before storing funds. Never type your recovery phrase into a computer or phone unless you are restoring on the hardware device itself following official prompts."
+    },
+    {
+      "id": "build-emulator",
+      "title": "Build and run the firmware emulator",
+      "keywords": [
+        "emulator",
+        "build",
+        "nix",
+        "poetry",
+        "unix",
+        "develop",
+        "compile",
+        "local"
+      ],
+      "answer": "Developer setup from the firmware-pro repo: install Nix and Git, clone with submodules, run `nix-shell`, then `poetry install`. Build the Unix emulator with `cd core && poetry run make build_unix`, then start it with `poetry run ./emu.py`. Optionally install the Python client from `python/` to talk to the emulator. See the repository README Getting Started section for the full flow."
+    },
+    {
+      "id": "firmware-update",
+      "title": "Firmware update and device wipe risk",
+      "keywords": [
+        "update",
+        "upgrade",
+        "firmware",
+        "wipe",
+        "downgrade",
+        "fix_version",
+        "vendor header"
+      ],
+      "answer": "Firmware updates can wipe device storage in specific cases (unsigned firmware, vendor change, or installing below the current fix_version). Always back up your recovery phrase offline before updating. Official Pro builds are produced via GitHub CI and multi-signed. Read docs/misc/update-wipes.md for wipe rules and docs/misc/verify-firmware.md for verification guidance."
+    },
+    {
+      "id": "verify-firmware",
+      "title": "Verify official firmware",
+      "keywords": [
+        "verify",
+        "hash",
+        "sha256",
+        "reproducible",
+        "official",
+        "signature",
+        "ci build"
+      ],
+      "answer": "You can compare fingerprints of CI-built firmware artifacts with official release binaries. Community verification instructions live in docs/misc/verify-firmware.md and OneKey help docs for open-source code verification. Prefer downloading firmware only from official OneKey release channels."
+    },
+    {
+      "id": "seed-safety",
+      "title": "Recovery phrase and PIN safety",
+      "keywords": [
+        "seed",
+        "recovery",
+        "mnemonic",
+        "pin",
+        "passphrase",
+        "backup",
+        "secret",
+        "phishing"
+      ],
+      "answer": "Your recovery phrase controls your funds. Write it on paper (or another offline medium), store it securely, and never share it. OneKey support and this bot will never ask for your seed, PIN, or passphrase. Beware phishing sites and fake apps. If you suspect compromise, move funds to a new wallet created on a trusted device after securing a new offline backup."
+    },
+    {
+      "id": "connection-issues",
+      "title": "Device not connecting",
+      "keywords": [
+        "usb",
+        "connect",
+        "bluetooth",
+        "not detected",
+        "cable",
+        "driver",
+        "app",
+        "pairing"
+      ],
+      "answer": "If the device is not detected: try another official data cable/port, unlock the device with PIN, restart the OneKey app, and ensure the OS has permission for USB/Bluetooth. On Linux, udev rules may be required for USB access. Confirm firmware is not stuck in bootloader-only mode after an interrupted update. If using the emulator, ensure `emu.py` is running and the client points at the emulator transport."
+    },
+    {
+      "id": "bootloader-mode",
+      "title": "Bootloader and recovery mode",
+      "keywords": [
+        "bootloader",
+        "boardloader",
+        "recovery mode",
+        "stuck",
+        "boot",
+        "reflash"
+      ],
+      "answer": "Pro firmware has staged boot components (boardloader, bootloader, firmware). Interrupted updates can leave the device waiting for firmware. Use official OneKey recovery/update flows rather than third-party flashers. Developers building custom images should follow core build docs and understand that non-official vendor headers can wipe storage when switching vendors."
+    },
+    {
+      "id": "security-report",
+      "title": "Report a security vulnerability",
+      "keywords": [
+        "security",
+        "vulnerability",
+        "bug bounty",
+        "exploit",
+        "cve",
+        "responsible disclosure"
+      ],
+      "answer": "Do not open a public GitHub issue for security vulnerabilities. Email security@onekey.so. OneKey runs a bug bounty program; follow responsible disclosure rules. This bot will not help develop exploits against devices or users."
+    },
+    {
+      "id": "contribute",
+      "title": "Contribute to firmware",
+      "keywords": [
+        "contribute",
+        "pull request",
+        "pr",
+        "changelog",
+        "style",
+        "coin",
+        "developer"
+      ],
+      "answer": "Contributions should include tests, pass style checks (`make style_check`), keep generated files updated (`make gen`), use Conventional Commits, and include a changelog entry. Read docs/misc/contributing.md and docs/misc/review.md. New coin requests have limited capacity; see COINS guidance in docs/misc."
+    },
+    {
+      "id": "community-support",
+      "title": "Where to get human support",
+      "keywords": [
+        "support",
+        "help",
+        "forum",
+        "issue",
+        "contact",
+        "community",
+        "ticket"
+      ],
+      "answer": "For product questions: OneKey community forum/discussions and official help center. For firmware bugs: GitHub issues on the firmware repository (non-security only). For security: security@onekey.so. This local bot answers common device/dev questions offline from a curated knowledge base and is not a substitute for official support on account-specific cases."
+    },
+    {
+      "id": "fido2",
+      "title": "FIDO2 / passkeys on device",
+      "keywords": [
+        "fido",
+        "fido2",
+        "u2f",
+        "passkey",
+        "2fa",
+        "webauthn",
+        "attestation"
+      ],
+      "answer": "OneKey Pro firmware includes FIDO2-related flows for second-factor / passkey style authentication. Register and assert credentials only on sites you trust. Account selection and cancel/attestation behavior are handled on-device\u2014confirm prompts carefully. Never approve unknown relying parties."
+    },
+    {
+      "id": "ton-signing",
+      "title": "TON signing support",
+      "keywords": [
+        "ton",
+        "sign data",
+        "telegram",
+        "jetton",
+        "toncoin"
+      ],
+      "answer": "Recent Pro firmware work includes TON sign-data support in core. Use official app flows for TON transactions and message signing. Always verify destination addresses and signing previews on the device screen before confirming."
+    },
+    {
+      "id": "block-music",
+      "title": "Music and entertainment are blocked",
+      "keywords": [
+        "music",
+        "song",
+        "playlist",
+        "spotify",
+        "block music",
+        "entertainment",
+        "ringtone",
+        "podcast",
+        "streaming"
+      ],
+      "answer": "This device support experience blocks all music and entertainment requests. OneKey Pro is a hardware wallet: use the bot for setup, firmware, verification, connection troubleshooting, FIDO2, and developer contribution questions only. Media apps and music playback are out of scope and intentionally denied by the block_all_music control."
+    }
+  ]
+}
