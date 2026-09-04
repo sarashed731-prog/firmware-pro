@@ -45,6 +45,9 @@ class ControlSettings:
     local_knowledge_first: bool = True
     append_safety_footer: bool = True
     allow_exploit_help: bool = False  # hard-deny
+    # Content controls (device focus: wallet support only)
+    block_all_music: bool = True  # hard-on: refuse music/entertainment requests
+    device_support_only: bool = True
 
     # LLM controls (off by default for privacy on devices)
     llm_enabled: bool = False
@@ -87,6 +90,8 @@ class ControlSettings:
                 "DEVICE_SUPPORT_BOT_SAFETY_FOOTER", base.append_safety_footer
             ),
             allow_exploit_help=False,
+            block_all_music=True,
+            device_support_only=True,
             llm_enabled=llm_enabled,
             llm_temperature=_env_float(
                 "DEVICE_SUPPORT_BOT_LLM_TEMPERATURE", base.llm_temperature
@@ -116,6 +121,8 @@ class ControlSettings:
             "no_persistent_chat_history": self.no_persistent_chat_history,
             "local_knowledge_first": self.local_knowledge_first,
             "allow_exploit_help": self.allow_exploit_help,
+            "block_all_music": self.block_all_music,
+            "device_support_only": self.device_support_only,
             "llm_enabled": self.llm_enabled,
             "llm_requires_explicit_opt_in": self.llm_requires_explicit_opt_in,
         }

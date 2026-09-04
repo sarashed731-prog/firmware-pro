@@ -4,8 +4,9 @@
   "safety_rules": [
     "Never ask for, accept, or repeat seed phrases, recovery words, PINs, passphrases, or private keys.",
     "Never instruct users to enter secrets into chat, email, or untrusted websites.",
-    "Escalate hardware wallet security incidents to security@onekey.so — do not open public issues for vulnerabilities.",
-    "Prefer official docs and verified firmware paths over third-party tools."
+    "Escalate hardware wallet security incidents to security@onekey.so \u2014 do not open public issues for vulnerabilities.",
+    "Prefer official docs and verified firmware paths over third-party tools.",
+    "Block all music and entertainment requests; keep scope on device wallet support only."
   ],
   "topics": [
     {
@@ -161,7 +162,7 @@
         "webauthn",
         "attestation"
       ],
-      "answer": "OneKey Pro firmware includes FIDO2-related flows for second-factor / passkey style authentication. Register and assert credentials only on sites you trust. Account selection and cancel/attestation behavior are handled on-device—confirm prompts carefully. Never approve unknown relying parties."
+      "answer": "OneKey Pro firmware includes FIDO2-related flows for second-factor / passkey style authentication. Register and assert credentials only on sites you trust. Account selection and cancel/attestation behavior are handled on-device\u2014confirm prompts carefully. Never approve unknown relying parties."
     },
     {
       "id": "ton-signing",
@@ -174,6 +175,22 @@
         "toncoin"
       ],
       "answer": "Recent Pro firmware work includes TON sign-data support in core. Use official app flows for TON transactions and message signing. Always verify destination addresses and signing previews on the device screen before confirming."
+    },
+    {
+      "id": "block-music",
+      "title": "Music and entertainment are blocked",
+      "keywords": [
+        "music",
+        "song",
+        "playlist",
+        "spotify",
+        "block music",
+        "entertainment",
+        "ringtone",
+        "podcast",
+        "streaming"
+      ],
+      "answer": "This device support experience blocks all music and entertainment requests. OneKey Pro is a hardware wallet: use the bot for setup, firmware, verification, connection troubleshooting, FIDO2, and developer contribution questions only. Media apps and music playback are out of scope and intentionally denied by the block_all_music control."
     }
   ]
 }

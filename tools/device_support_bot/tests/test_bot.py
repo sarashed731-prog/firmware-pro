@@ -8,6 +8,7 @@ from pathlib import Path
 from tools.device_support_bot.bot import (
     MAX_MESSAGE_CHARS,
     REFUSE_EXPLOIT,
+    REFUSE_MUSIC,
     REFUSE_OVERFLOW,
     REFUSE_SECRETS,
     DeviceSupportBot,
@@ -58,10 +59,22 @@ class DeviceSupportBotTests(unittest.TestCase):
         self.assertEqual(response.source, "safety")
         self.assertEqual(response.text, REFUSE_EXPLOIT)
 
+    def test_music_refusal(self) -> None:
+        response = self.bot.answer("play music on my device playlist", use_llm=False)
+        self.assertEqual(response.source, "safety")
+        self.assertEqual(response.text, REFUSE_MUSIC)
+
+    def test_spotify_refusal(self) -> None:
+        response = self.bot.answer("can you open spotify and stream a song?", use_llm=False)
+        self.assertEqual(response.source, "safety")
+        self.assertEqual(response.text, REFUSE_MUSIC)
+
     def test_control_settings_exposed(self) -> None:
         settings = self.bot.control_settings()
         self.assertIn("min_match_score", settings)
         self.assertFalse(settings["allow_exploit_help"])
+        self.assertTrue(settings["block_all_music"])
+        self.assertTrue(settings["device_support_only"])
         self.assertTrue(settings["privacy_mode"])
         self.assertTrue(settings["no_telemetry"])
         self.assertTrue(settings["no_persistent_chat_history"])
@@ -73,6 +86,8 @@ class DeviceSupportBotTests(unittest.TestCase):
         self.assertTrue(privacy["privacy_mode"])
         self.assertTrue(privacy["refuse_secret_shares"])
         self.assertFalse(privacy["allow_exploit_help"])
+        self.assertTrue(privacy["block_all_music"])
+        self.assertTrue(privacy["device_support_only"])
 
     def test_empty_question(self) -> None:
         response = self.bot.answer("   ", use_llm=False)

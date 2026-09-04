@@ -13,9 +13,11 @@ The bot runs in **privacy mode** by default:
 - Local knowledge base is tried first
 - Seed/PIN/passphrase pastes are refused
 - Exploit/bypass help is hard-denied
+- **All music / entertainment requests are blocked** (`block_all_music=true`, locked on)
+- Scope stays device-support-only (wallet, firmware, security, developer help)
 - Optional cloud LLM is **off** unless you explicitly set `DEVICE_SUPPORT_BOT_LLM=1`
 
-Critical privacy guards cannot be turned off via environment variables.
+Critical privacy and content guards cannot be turned off via environment variables.
 
 ## Safety
 
@@ -57,7 +59,7 @@ Runtime controls live in `tools/device_support_bot/settings.py` and can be tuned
 | `DEVICE_SUPPORT_BOT_BANNER` | Interactive banner on/off |
 | `DEVICE_SUPPORT_BOT_JSON_COMPACT` | Compact `--json` output |
 
-Messages longer than 4000 characters are rejected (overflow guard). Exploit/bypass requests are refused. `allow_exploit_help` is always false.
+Messages longer than 4000 characters are rejected (overflow guard). Exploit/bypass requests are refused. `allow_exploit_help` is always false. Music, playlists, streaming, podcasts, and similar entertainment requests are always blocked (`block_all_music` is locked on).
 
 Optional LLM fallback:
 

@@ -34,10 +34,27 @@ REFUSE_EXPLOIT = (
     "To report a vulnerability responsibly, email security@onekey.so."
 )
 
+REFUSE_MUSIC = (
+    "Music and entertainment requests are blocked on this device support bot. "
+    "OneKey Pro support covers wallet setup, firmware, security, and developer workflows only. "
+    "Ask about setup, firmware update, verification, connection issues, or contributing instead."
+)
+
 EXPLOIT_PATTERNS = (
     re.compile(r"\b(exploit|payload|0day|jailbreak)\b", re.I),
     re.compile(r"\b(bypass|break)\b.*\b(pin|seed|secure element|securelement)\b", re.I),
     re.compile(r"\bextract\b.*\b(seed|private key|mnemonic)\b", re.I),
+)
+
+MUSIC_PATTERNS = (
+    re.compile(
+        r"\b(music|song|songs|playlist|spotify|apple music|youtube music|"
+        r"podcast|radio|album|lyrics|karaoke|mp3|flac|streaming music|"
+        r"melody|ringtone)\b",
+        re.I,
+    ),
+    re.compile(r"\b(play|stream|download)\b.*\b(music|song|track|album)\b", re.I),
+    re.compile(r"\b(music|song|track)\b.*\b(play|stream|download|recommend)\b", re.I),
 )
 
 
@@ -153,6 +170,10 @@ class DeviceSupportBot:
     def looks_like_exploit_request(self, message: str) -> bool:
         return any(p.search(message) for p in EXPLOIT_PATTERNS)
 
+    def looks_like_music_request(self, message: str) -> bool:
+        """Return True for music/entertainment content requests."""
+        return any(p.search(message) for p in MUSIC_PATTERNS)
+
     def rank_topics(
         self, message: str, *, limit: int = 5
     ) -> List[Tuple[float, Dict[str, Any]]]:
@@ -185,6 +206,9 @@ class DeviceSupportBot:
 
         if not self.controls.allow_exploit_help and self.looks_like_exploit_request(text):
             return SupportResponse(text=REFUSE_EXPLOIT, source="safety")
+
+        if self.controls.block_all_music and self.looks_like_music_request(text):
+            return SupportResponse(text=REFUSE_MUSIC, source="safety")
 
         ranked = self.rank_topics(text)
         if ranked and ranked[0][0] >= self.min_score:
@@ -235,7 +259,7 @@ class DeviceSupportBot:
             f"You are a concise support assistant for the {device} hardware wallet firmware. "
             "Help with device setup, firmware, emulator, and safe usage. "
             "If unsure, say so and point to official docs. "
-            "Refuse requests for exploits or secret handling.\n"
+            "Refuse requests for exploits, secret handling, and music/entertainment.\n"
             f"Safety rules:\n{rules}\n"
             f"Known topics:\n{catalog}"
         )
