@@ -49,12 +49,20 @@ EXPLOIT_PATTERNS = (
 MUSIC_PATTERNS = (
     re.compile(
         r"\b(music|song|songs|playlist|spotify|apple music|youtube music|"
-        r"podcast|radio|album|lyrics|karaoke|mp3|flac|streaming music|"
+        r"podcast|album|lyrics|karaoke|mp3|flac|streaming music|"
         r"melody|ringtone)\b",
         re.I,
     ),
-    re.compile(r"\b(play|stream|download)\b.*\b(music|song|track|album)\b", re.I),
-    re.compile(r"\b(music|song|track)\b.*\b(play|stream|download|recommend)\b", re.I),
+    re.compile(
+        r"\b(play|stream|download|recommend|listen(?:\s+to)?|tune\s+in\s+to)\b.*"
+        r"\b(music|song|songs|track|tracks|album|tune|tunes|playlist|radio|station)\b",
+        re.I,
+    ),
+    re.compile(
+        r"\b(music|song|songs|track|tracks|album|tune|tunes|playlist|radio|station)\b.*"
+        r"\b(play|stream|download|recommend|listen|tune)\b",
+        re.I,
+    ),
 )
 
 

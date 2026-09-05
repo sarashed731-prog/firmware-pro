@@ -69,6 +69,20 @@ class DeviceSupportBotTests(unittest.TestCase):
         self.assertEqual(response.source, "safety")
         self.assertEqual(response.text, REFUSE_MUSIC)
 
+    def test_music_recommendation_refusal(self) -> None:
+        for question in ("recommend a track", "play a tune"):
+            with self.subTest(question=question):
+                response = self.bot.answer(question, use_llm=False)
+                self.assertEqual(response.source, "safety")
+                self.assertEqual(response.text, REFUSE_MUSIC)
+
+    def test_bluetooth_radio_support_is_not_blocked(self) -> None:
+        response = self.bot.answer(
+            "why is the Bluetooth radio not connecting?", use_llm=False
+        )
+        self.assertEqual(response.source, "knowledge")
+        self.assertEqual(response.topic_id, "connection-issues")
+
     def test_control_settings_exposed(self) -> None:
         settings = self.bot.control_settings()
         self.assertIn("min_match_score", settings)
